@@ -1,0 +1,41 @@
+{
+  "name": "authproject",
+  "version": "1.0.0",
+  "description": "authentication project from Phamus",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.14",
+    "@types/geoip-country": "^4.0.0",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/mailgun-js": "^0.22.12",
+    "@types/mongodb": "^4.0.7",
+    "@types/mongoose": "^5.11.97",
+    "@types/nodemailer": "^6.4.6",
+    "@types/nodemon": "^1.19.2",
+    "@types/request-ip": "^0.0.37",
+    "@vonage/server-sdk": "^2.11.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "geoip-country": "^4.1.25",
+    "jsonwebtoken": "^8.5.1",
+    "mailgun-js": "^0.22.0",
+    "mongodb": "^4.10.0",
+    "mongoose": "^6.6.5",
+    "ngrok": "^4.3.3",
+    "nodemailer": "^6.8.0",
+    "nodemon": "^2.0.20",
+    "request-country": "^0.1.6",
+    "request-ip": "^3.3.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  }
+}
