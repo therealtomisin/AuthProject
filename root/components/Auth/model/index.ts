@@ -34,6 +34,11 @@ const authSchema = new Schema({
     isActive: {
         type: Boolean,
         default: false
+    },
+    role: {
+        type: String,
+        required: true,
+        enum: ["driver, passenger"]
     }
 }, {
     timestamps: true

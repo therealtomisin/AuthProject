@@ -7,6 +7,7 @@ export interface IAuth {
     isVerified?: boolean;
     isActive?: boolean;
     expiresIn?: number;
+    role?: string
 }
 
 export interface IFetchUser {

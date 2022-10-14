@@ -1,6 +1,8 @@
 import { ChangePassword, IFetchUser, IUser } from "../../../Types/IUser";
 import model from "../../Auth/model";
 import { confirmPassword, generateToken } from "../../Auth/service";
+import routeModel from "../../TaxiRoutes/model";
+import { taxiModel } from "../../Taxis/model";
 import userModel from "../model"
 
 export const createUser = async (query?: IUser) => {
@@ -83,5 +85,40 @@ export const disableAccount = async (id: string, payload: string) => {
     })
 
     return disable
+}
+
+export const assignUserToTaxi = async (id: string) => {
+    const check = await model.findOne({_id: id})
+    if(check?.role === "passenger") return "there must be an issue somewhere."
+
+    const user = await userModel.findOne({authId: id})
+    if(!user) return "oopsie!"
+
+    const userId = user._id
+
+    const getTaxis = await taxiModel.find()
+    const taxiIds = getTaxis.map(taxi=>{
+        return taxi._id
+    })
+    let x = taxiIds.length
+    const getTaxi = Math.trunc(Math.random()*x) + 1;
+
+    const currentTaxi = await taxiModel.findOneAndUpdate({_id: taxiIds[getTaxi]}, {
+        $set: {
+            currentDriver: userId
+        }
+    }, {new: true})
+
+    return currentTaxi
+
+}
+
+export const bookRide = async (from: string, to: string) => {
+    const getRoute = await routeModel.findOne({from, to})
+    if(!getRoute) return "sorry, we don't follow this route."
+
+    const getRouteTaxis = taxiModel.find({route: getRoute._id})
+
+    
 }
 

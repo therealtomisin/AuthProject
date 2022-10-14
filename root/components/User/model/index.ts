@@ -7,6 +7,11 @@ const userSchema = new Schema({
         // required: true,
         unique: true
     },
+    role: {
+        type: String,
+        required: true,
+        enum: ["Driver", "passenger"]
+    },
     about:{
         type: String,
         default: ''
