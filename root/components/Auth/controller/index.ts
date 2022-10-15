@@ -16,12 +16,12 @@ export interface CustomRequest extends Request {
 
 export const postSignUp = async (req: Request, res: Response) => {
 try {
-    const {username, password, email, phoneNumber} = req.body
+    const {username, password, email, phoneNumber, role} = req.body
     const newAuth = await SignUp(req.body)
 
     console.log("the output of the signup is:", newAuth)
 
-    const output = await createUser({username: username, authId: newAuth})
+    const output = await createUser({username: username, authId: newAuth, role})
 
     res.status(200).json(output)
 

@@ -10,7 +10,7 @@ const userSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ["Driver", "passenger"]
+        enum: ["driver", "passenger"]
     },
     about:{
         type: String,
@@ -27,10 +27,14 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Auth",
         required: true
+    },
+    currentRide: {
+        type: Schema.Types.ObjectId,
+        ref: "Ride"
     }
 }, {
     timestamps: true
 })
 
 
-export default model<IUser>("User", userSchema)
+export default model("User", userSchema)

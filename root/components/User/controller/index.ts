@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CustomReq } from "../../../Types/CustomReq";
 import { findUser, generateToken } from "../../Auth/service";
-import { changeEmail, createUser, updateUserDetails, changeUsername, getUser, disableAccount } from "../service";
+import { changeEmail, createUser, updateUserDetails, changeUsername, getUser, disableAccount, assignUserToTaxi, bookRide } from "../service";
 
 // export const postCreateUser = async (req: Request,res: Response) => {
 //     // const authenticatedUser = await findUser()
@@ -34,5 +34,16 @@ export const postGetUser = async (req: CustomReq, res: Response) => {
 
 export const postDisableAccount = async (req: CustomReq, res: Response) => {
     const output = await disableAccount(req.user?.id!, req.body.password)
+    res.status(200).json(output)
+}
+
+export const postAssignUserToTaxi = async (req: CustomReq, res: Response) => {
+    const output = await assignUserToTaxi(req.user?.id!)
+    res.status(200).json(output)
+}
+
+export const postOrderRide = async (req: CustomReq, res: Response) => {
+    const {from, to} = req.body
+    const output = await bookRide(from, to, req.user?.id!)
     res.status(200).json(output)
 }

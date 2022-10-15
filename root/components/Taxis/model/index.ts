@@ -27,7 +27,14 @@ const taxiSchema = new Schema({
     },
     seatsTaken: {
         type: String,
-        required: true
+        required: true,
+        default: "0"
+    },
+    status: {
+        type: String,
+        enum: ['active', 'busy'],
+        required: true,
+        default: 'active'
     }
 }, {
     timestamps: true

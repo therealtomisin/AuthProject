@@ -1,6 +1,9 @@
+import { ITaxi } from "../../../Types/ITaxi";
 import { ChangePassword, IFetchUser, IUser } from "../../../Types/IUser";
 import model from "../../Auth/model";
 import { confirmPassword, generateToken } from "../../Auth/service";
+import rideModel from "../../Rides/model";
+import { createRide } from "../../Rides/service";
 import routeModel from "../../TaxiRoutes/model";
 import { taxiModel } from "../../Taxis/model";
 import userModel from "../model"
@@ -87,7 +90,8 @@ export const disableAccount = async (id: string, payload: string) => {
     return disable
 }
 
-export const assignUserToTaxi = async (id: string) => {
+export const assignUserToTaxi = async (id: string): Promise<null|ITaxi|string> => {
+    console.log(id)
     const check = await model.findOne({_id: id})
     if(check?.role === "passenger") return "there must be an issue somewhere."
 
@@ -95,13 +99,18 @@ export const assignUserToTaxi = async (id: string) => {
     if(!user) return "oopsie!"
 
     const userId = user._id
+    console.log(userId)
 
     const getTaxis = await taxiModel.find()
+    console.log(getTaxis)
     const taxiIds = getTaxis.map(taxi=>{
         return taxi._id
     })
+    console.log(taxiIds)
     let x = taxiIds.length
-    const getTaxi = Math.trunc(Math.random()*x) + 1;
+    const getTaxi = Math.trunc(Math.random()*x);
+    console.log(getTaxi)
+    console.log(taxiIds[getTaxi])
 
     const currentTaxi = await taxiModel.findOneAndUpdate({_id: taxiIds[getTaxi]}, {
         $set: {
@@ -113,12 +122,53 @@ export const assignUserToTaxi = async (id: string) => {
 
 }
 
-export const bookRide = async (from: string, to: string) => {
+export const bookRide = async (from: string, to: string, authId: string) => {
+
+    const getCurrentUser = await getUser({authId})
+    if(!getCurrentUser) return "oops, there is a problem!"
+
+    if(getCurrentUser.role === "driver") return "nigga you should be driving!"
+
     const getRoute = await routeModel.findOne({from, to})
     if(!getRoute) return "sorry, we don't follow this route."
 
-    const getRouteTaxis = taxiModel.find({route: getRoute._id})
+    const getRouteTaxis = await taxiModel.find({route: getRoute._id, status: 'active'})
+    const getTaxiIds = getRouteTaxis.map(routeTaxi => {
+        return routeTaxi._id
+    })
 
-    
+    let taxiIdLength = getTaxiIds.length
+    let getRandomNum = Math.trunc(Math.random()*taxiIdLength)
+
+    const getRandomTaxiId = getTaxiIds[getRandomNum]
+
+    const taxiCred = await taxiModel.findOne({_id: getRandomTaxiId})
+    if(!taxiCred) return "Sorry there are no active riders at the moment."
+
+    const newRide = await createRide({
+        passenger: getCurrentUser._id,
+        assignedRider: taxiCred.currentDriver,
+        routeId: taxiCred.route,
+        status: "in progress"
+    })
+
+    const updateUserRide = await userModel.findByIdAndUpdate(getCurrentUser._id, {
+        $set: {
+            currentRide: newRide._id
+        }
+    }, {new: true})
+
+    const updateTaxiStatus = await taxiModel.findByIdAndUpdate(getRandomTaxiId, {
+        $set: {
+            seatsTaken: (parseInt(taxiCred.seatsTaken!) + 1).toString()
+        }
+    }, {new: true})
+
+    return {
+        newRide,
+        updateUserRide,
+        updateTaxiStatus
+    }
+
 }
 

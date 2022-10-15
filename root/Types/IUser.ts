@@ -13,6 +13,8 @@ export interface IUser {
     about?: string;
     authId?: ObjectId|string;
     dateOfBirth?: Date;
+    currentRide?: ObjectId
+    role?: string
 }
 
 export interface IFetchUser {

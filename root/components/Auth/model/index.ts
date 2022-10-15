@@ -38,7 +38,7 @@ const authSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ["driver, passenger"]
+        enum: ["driver", "passenger"]
     }
 }, {
     timestamps: true

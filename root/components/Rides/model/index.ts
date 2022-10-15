@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { IRides } from "../../../Types/IRides";
 
 const rideSchema = new Schema({
     passenger: {
@@ -25,6 +26,6 @@ const rideSchema = new Schema({
     timestamps: true
 })
 
-const rideModel = model("Ride", rideSchema)
+const rideModel = model<IRides>("Ride", rideSchema)
 
 export default rideModel
