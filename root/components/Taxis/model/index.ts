@@ -32,9 +32,9 @@ const taxiSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'busy'],
+        enum: ['free', 'busy'],
         required: true,
-        default: 'active'
+        default: 'free'
     }
 }, {
     timestamps: true

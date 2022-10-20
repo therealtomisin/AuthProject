@@ -2,12 +2,17 @@ import { Schema, model } from "mongoose";
 import { IRides } from "../../../Types/IRides";
 
 const rideSchema = new Schema({
-    passenger: {
+    passengers: [{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    }],
+    assignedRider: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    assignedRider: {
+    assignedTaxi: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
@@ -19,8 +24,11 @@ const rideSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["in progress", "done", "not started"],
+        enum: ["inProgress", "ended", "yetToStart"],
         default: "not started"
+    },
+    rating: {
+        type: String,
     }
 }, {
     timestamps: true

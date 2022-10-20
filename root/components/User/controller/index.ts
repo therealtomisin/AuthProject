@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CustomReq } from "../../../Types/CustomReq";
-import { findUser, generateToken } from "../../Auth/service";
+import { findUser, generateAuthToken } from "../../Auth/service";
 import { changeEmail, createUser, updateUserDetails, changeUsername, getUser, disableAccount, assignUserToTaxi, bookRide } from "../service";
 
 // export const postCreateUser = async (req: Request,res: Response) => {
@@ -9,14 +9,15 @@ import { changeEmail, createUser, updateUserDetails, changeUsername, getUser, di
 // }
 
 export const postUpdateUser = async (req: CustomReq, res: Response) => {
-    const {about, dateOfBirth} = req.body
-    const output = await updateUserDetails(req.user?.id!, req.body)
+    const {about, dateOfBirth, username} = req.body
+    console.log((req.file?.path))
+    const output = await updateUserDetails(req.user?.id!, {...req.body, avatar: req.file?.path})
     res.status(200).json(output)
 }
 
 export const postChangeEmail = async (req: CustomReq, res: Response) => {
     const output = await changeEmail(req.user?.id!, req.body.email)
-    await generateToken(req.body.email);
+    await generateAuthToken(req.body.email);
     res.status(200).json(output)
 }
 

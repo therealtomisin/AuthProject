@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import requestCountry from 'request-country'
 import geoip from "geoip-country"
 import requestIp from 'request-ip'
-import { confirmPassword, deleteAll, generateToken, login, resetPassword, SignUp, Token, verifyOTP } from "../service"
+import { changePassword, confirmPassword, generateAuthToken, login, resetPassword, SignUp, Token, verifyOTP } from "../service"
 import { IAuth } from "../../../Types/IAuth"
 import { changeUsername, createUser } from "../../User/service"
 import { CustomReq } from "../../../Types/CustomReq"
@@ -30,9 +30,16 @@ try {
 }
 }
 
+export const postRefreshToken = async (req: CustomReq, res: Response) => {
+    generateAuthToken(req.body.email)
+
+    res.status(200).send('the token has been generated again!')
+}
+
 export const postVerifyToken = async (req: Request, res: Response) => {
     try {
-        const output = await verifyOTP(req.body.token, req.body._id)
+        const {email, id} = req.body
+        const output = await verifyOTP({id, email})
         res.status(200).json(output)
     } catch (error: any) {
         console.log(error.message)
@@ -50,15 +57,6 @@ export const postLogin = async (req: CustomReq, res: Response) => {
     }
 }
 
-export const postDeleteAll = async (req: Request, res: Response) => {
-    try {
-        const output = await deleteAll()
-        res.status(200).send("done")
-    } catch (error: any) {
-        console.log(error.message)
-    }
-}
-
 export const postResetPassword = async (req: CustomReq, res: Response) => {
     try {
         const output = await resetPassword(req.body.email)
@@ -66,6 +64,13 @@ export const postResetPassword = async (req: CustomReq, res: Response) => {
     } catch (error: any) {
         console.log(error.message)
     }
+}
+
+export const getConfirmResetPassword = async (req: CustomReq, res: Response) => {
+    const {token, email} = req.body
+    const output = verifyOTP({token, email})
+
+    res.status(200).json(output)
 }
 
 export const postConfirmPassword = async (req: CustomReq, res: Response) => {
@@ -77,6 +82,14 @@ export const postConfirmPassword = async (req: CustomReq, res: Response) => {
    }
 }
 
-export const postDisableAccount = async () => {
-    
+export const postChangePassword = async (req: CustomReq, res: Response) => {
+    try {
+        const {currentPassword, newPassword, confirmPassword} = req.body
+        const output = await changePassword(req.user?.id!, {currentPassword, newPassword, confirmPassword})
+
+        res.status(200).json(output)
+        
+    } catch (error: any) {
+        console.log(error.message)
+    }
 }

@@ -6,7 +6,8 @@ export interface ITaxi {
     currentDriver?: ObjectId;
     number?: string;
     plateNumber?: string;
-    seatsTaken?: string
+    seatsTaken?: string;
+    capacity?: string;
 }
 
 export interface INewTaxi {

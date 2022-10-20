@@ -1,9 +1,10 @@
 import { ObjectId } from "mongodb";
-
+;
 export interface IRides {
-    passenger?: ObjectId;
+    passengers?: ObjectId[];
     assignedRider?: ObjectId;
     routeId?: ObjectId;
     status?: string;
-    _id?: ObjectId
+    _id?: ObjectId;
+    rating?: string
 }

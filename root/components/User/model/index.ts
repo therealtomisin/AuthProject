@@ -12,6 +12,11 @@ const userSchema = new Schema({
         required: true,
         enum: ["driver", "passenger"]
     },
+    status: {
+        type: String,
+        enum: ["enabled", "disabled"],
+        required: true
+    },
     about:{
         type: String,
         default: ''
@@ -31,6 +36,10 @@ const userSchema = new Schema({
     currentRide: {
         type: Schema.Types.ObjectId,
         ref: "Ride"
+    },
+    avatar: {
+        type: String,
+        default: ''
     }
 }, {
     timestamps: true

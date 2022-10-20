@@ -7,7 +7,9 @@ export interface IAuth {
     isVerified?: boolean;
     isActive?: boolean;
     expiresIn?: number;
-    role?: string
+    role?: string;
+    isAdmin?: boolean;
+    id?: string;
 }
 
 export interface IFetchUser {
@@ -16,4 +18,10 @@ export interface IFetchUser {
     phoneNumber?: string;
     token?: string;
     authId?: string
+}
+
+export interface ChangePassword {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
 }

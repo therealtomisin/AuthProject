@@ -11,10 +11,13 @@ export interface IUser {
     isActive?: boolean;
     expiresIn?: number;
     about?: string;
-    authId?: ObjectId|string;
+    authId?: ObjectId|string|Error;
     dateOfBirth?: Date;
     currentRide?: ObjectId
-    role?: string
+    role?: string;
+    avatar?: string;
+    _id?: ObjectId;
+    status?: string;
 }
 
 export interface IFetchUser {
@@ -28,10 +31,4 @@ export interface IFetchUser {
 export interface JWTpayload {
     id?: string;
     email?: string;
-}
-
-export interface ChangePassword {
-    currentPassword: string;
-    newPassword: string;
-    consfirmPassword: string;
 }
