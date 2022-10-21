@@ -15,7 +15,8 @@ const userSchema = new Schema({
     status: {
         type: String,
         enum: ["enabled", "disabled"],
-        required: true
+        required: true,
+        default: 'disabled'
     },
     about:{
         type: String,

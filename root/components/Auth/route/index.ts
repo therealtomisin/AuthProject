@@ -1,14 +1,16 @@
 import { Router } from "express";
+import validator from "../../../utils/validator";
 import { verifyToken } from "../../../utils/verifyToken";
-import { postConfirmPassword, postLogin, postRefreshToken, postSignUp, postVerifyToken } from "../controller";
+import { joiLoginSchema, joiSchema, joiVerifySchema } from "./Schema";
+import { getConfirmPassword, getConfirmSignUp, postLogin, getRefreshToken, postSignUp } from "../controller";
 export const authRouter = Router()
 
-authRouter.post('/register', postSignUp)
+authRouter.post('/register', validator(joiSchema), postSignUp)
 
-authRouter.post('/login', postLogin)
+authRouter.post('/login',validator(joiLoginSchema), postLogin)
 
-authRouter.post('/verify', postVerifyToken)
+authRouter.get('/verify', validator(joiVerifySchema), getConfirmSignUp)
 
-authRouter.post('/refresh', postRefreshToken)
+authRouter.get('/refresh', getRefreshToken)
 
-authRouter.post('/confirmPassword', verifyToken, postConfirmPassword)
+authRouter.get('/confirmPassword', verifyToken, getConfirmPassword)

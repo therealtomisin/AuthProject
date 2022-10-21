@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import requestCountry from 'request-country'
 import geoip from "geoip-country"
 import requestIp from 'request-ip'
-import { changePassword, confirmPassword, generateAuthToken, login, resetPassword, SignUp, Token, verifyOTP } from "../service"
+import { changePassword, confirmPassword, findUser, generateAuthToken, login, resetPassword, SignUp, Token, verifyOTP } from "../service"
 import { IAuth } from "../../../Types/IAuth"
 import { changeUsername, createUser } from "../../User/service"
 import { CustomReq } from "../../../Types/CustomReq"
@@ -30,13 +30,7 @@ try {
 }
 }
 
-export const postRefreshToken = async (req: CustomReq, res: Response) => {
-    generateAuthToken(req.body.email)
-
-    res.status(200).send('the token has been generated again!')
-}
-
-export const postVerifyToken = async (req: Request, res: Response) => {
+export const getConfirmSignUp = async (req: Request, res: Response) => {
     try {
         const {email, id} = req.body
         const output = await verifyOTP({id, email})
@@ -45,6 +39,13 @@ export const postVerifyToken = async (req: Request, res: Response) => {
         console.log(error.message)
     }
 }
+
+export const getRefreshToken = async (req: CustomReq, res: Response) => {
+    await generateAuthToken(req.body.email)
+
+    res.status(200).send('the token has been generated again!')
+}
+
 
 export const postLogin = async (req: CustomReq, res: Response) => {
     try {
@@ -73,7 +74,7 @@ export const getConfirmResetPassword = async (req: CustomReq, res: Response) => 
     res.status(200).json(output)
 }
 
-export const postConfirmPassword = async (req: CustomReq, res: Response) => {
+export const getConfirmPassword = async (req: CustomReq, res: Response) => {
    try {
         const output = await confirmPassword(req.user?.id!, req.body.password)
         res.status(200).send("good to go!")

@@ -23,19 +23,32 @@ export interface SignUpOutPut  {
     token?: string;
 }
 
-export const SignUp = async (payload: IAuth, req?: Request): Promise<ObjectId|string|Error> => {
+export const SignUp = async (payload: IAuth): Promise<ObjectId|string|Error> => {
     const checkMail = await findUser({email: payload.email})
     if (checkMail) return new Error("This user already exists!")
 
     const checkNumber = await findUser({phoneNumber: payload.phoneNumber})
     if (checkNumber) return new Error("This user already exists!")
 
-    const newNumber = intertionalize(payload.phoneNumber!)
+    // const newNumber = intertionalize(payload.phoneNumber!)
     
-    const oo = await authModel.create({...payload, phoneNumber: newNumber})
+    const oo = await authModel.create(payload)
     const token = await generateAuthToken(oo.email!)
 
     return token
+}
+
+export const confirmSignUp2 = async (payload: IAuth) => {
+    const findMatchingUser = await authModel.findOne({payload})
+    if(!findMatchingUser) throw new Error("incorrect token.")
+
+    const compareToken = await bcrypt.compare(payload.token!, findMatchingUser?.token!)
+    if(!compareToken) throw new Error("incorrect!")
+
+    const now = Date.now()
+    if(findMatchingUser?.expiresIn! <= now) throw new Error("token is expired!")
+
+
 }
 
 export const findUser = async (query: IFetchUser): Promise<IAuth|null> =>{
@@ -87,8 +100,6 @@ export const verifyOTP = async (payload: IAuth): Promise<Error|IAuth> => {
         }
     }, {new:true})
 
-    // const output = await login({username: updatedUser?.username, password: updatedUser?.password})
-
     return updatedUser as IAuth
 }
 
@@ -135,20 +146,6 @@ export const resetPassword = async (email: string): Promise<string|Error> => {
     return "token has been generated, please input it to confirm password reset!"
 }
 
-// export const verifyResetPassword = async (token: string, email: string): Promise<string|Error> => {
-//     const findAuth = await findUser({token})
-
-//     if (!findAuth) throw new Error("incorrect Token!")
-
-//     if (findAuth.email !== email) throw new Error("incorrect Token!")
-
-//     return "we are good to go then!"
-// }
-
-export const completeResetPassword = async () => {
-
-}
-
 export const confirmPassword = async (id: string, payload: string) => {
     const user = await findUser({authId: id})
     const unhashedPword = bcrypt.compare(payload, user?.password!)
@@ -159,10 +156,21 @@ export const confirmPassword = async (id: string, payload: string) => {
     return "good to go!😉"
 }
 
+export const completeResetPassword = async (newPassword: string, id: string) => {
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    const updatePassword = await authModel.findOneAndUpdate({id}, {
+        $set: {
+            password: hashedPassword
+        }
+    }, {new: true})
+
+    return updatePassword
+}
+
 export const disableAccount = async (id: string) => {
     const output = await authModel.findOneAndUpdate({_id: id}, {
         $set: {
-            isActive: false
+            isActive: false,
         }
     }, {
         new: true
